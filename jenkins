@@ -24,8 +24,7 @@ pipeline {
             }
         }
 
-       
-stage('Deploy Application') {
+        stage('Deploy Application') {
             agent {
                 label 'node1'
             }
@@ -35,19 +34,20 @@ stage('Deploy Application') {
                     // Download and install Apache Tomcat
                     def tomcatUrl = 'https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz'
                     sh "wget -q -O tomcat.tar.gz ${tomcatUrl}"
+                    
+                    // Create the target directory if it doesn't exist
+                    sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps"
+
+                    // Extract Tomcat into the target directory
                     sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
 
-
-                    // Create the target directory if it doesn't exist
-                    sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps/"
-
-                    // Remove existing WAR files
+                    // Remove existing WAR files (if any)
                     sh "sudo rm -rf /home/centos/apache-tomcat-7.0.94/webapps/*.war"
 
                     // Restore stashed WAR file
                     unstash "Jenkinscicdfinal"
 
-                    // Move the WAR file to the target directory
+                    // Move the WAR file to the webapps directory
                     sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
 
                     // Restart Tomcat
