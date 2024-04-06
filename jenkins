@@ -29,29 +29,33 @@ pipeline {
                 label 'node1'
             }
             steps {
-                echo "Deploying the application"
+            echo "Deploying the application"
                 script {
-                    def tomcatHome = "/opt/apache-tomcat-8.5.99"
-                    def tomcatWebapps = "${tomcatHome}/webapps"
-                    
-                    // Download and install Apache Tomcat
-                    def tomcatUrl = 'https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz'
-                    sh "wget -q -O tomcat.tar.gz ${tomcatUrl}"
-                   sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
-                    
-                    // Remove existing WAR files
-                    sh "sudo rm -rf ${tomcatWebapps}/*.war"
-                    
-                    // Restore stashed WAR file
-                    unstash "Jenkinscicdfinal"
-                    
-                    // Move the WAR file to the webapps directory
-                    sh "sudo mv target/*.war ${tomcatWebapps}/"
-                    
-                    // Restart Tomcat
-                    sh "sudo ${tomcatHome}/bin/startup.sh"
-                }
-            }
+            // Download and install Apache Tomcat
+            def tomcatUrl = 'https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz'
+            sh "wget -q -O tomcat.tar.gz ${tomcatUrl}"
+              
+            // Extract Tomcat into the target directory
+            sh "sudo tar -xzf tomcat.tar.gz -C /opt"
+            
+            // Ensure the webapps directory exists
+            sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps"
+            
+            // Extract files into webapps directory
+            sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
+            
+            // Remove existing WAR files (if any)
+            sh "sudo rm -rf /home/centos/apache-tomcat-7.0.94/webapps/*.war"
+
+            // Restore stashed WAR file
+            unstash "Jenkinscicdfinal"
+
+            // Move the WAR file to the webapps directory
+            sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
+
+            // Restart Tomcat
+            sh "sudo /opt/apache-tomcat-8.5.99/bin/startup.sh"
+        }
         }
     }
 }
