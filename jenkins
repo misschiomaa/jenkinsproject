@@ -34,11 +34,10 @@ pipeline {
                     // Download and install Apache Tomcat
                     def tomcatUrl = 'https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz'
                     sh "wget -q -O tomcat.tar.gz ${tomcatUrl}"
-                      // Create the target directory if it doesn't exist
-                    sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps/"
-                    sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
-
-
+                      
+                   // sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
+                    sh "sudo tar -xzf tomcat.tar.gz -C /opt"
+                                    
                     // Create the target directory if it doesn't exist
                     sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps/"
 
