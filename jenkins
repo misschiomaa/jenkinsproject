@@ -31,27 +31,25 @@ pipeline {
             steps {
                 echo "Deploying the application"
                 script {
+                    def tomcatHome = "/opt/apache-tomcat-8.5.99"
+                    def tomcatWebapps = "${tomcatHome}/webapps"
+                    
                     // Download and install Apache Tomcat
                     def tomcatUrl = 'https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz'
                     sh "wget -q -O tomcat.tar.gz ${tomcatUrl}"
-                      
-                   // sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
                     sh "sudo tar -xzf tomcat.tar.gz -C /opt"
-                                    
-                    // Create the target directory if it doesn't exist
-                    sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps/"
-
+                    
                     // Remove existing WAR files
-                    sh "sudo rm -rf /home/centos/apache-tomcat-7.0.94/webapps/*.war"
-
+                    sh "sudo rm -rf ${tomcatWebapps}/*.war"
+                    
                     // Restore stashed WAR file
                     unstash "Jenkinscicdfinal"
-
-                    // Move the WAR file to the target directory
-                    sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
-
+                    
+                    // Move the WAR file to the webapps directory
+                    sh "sudo mv target/*.war ${tomcatWebapps}/"
+                    
                     // Restart Tomcat
-                    sh "sudo /opt/apache-tomcat-8.5.99/bin/startup.sh"
+                    sh "sudo ${tomcatHome}/bin/startup.sh"
                 }
             }
         }
