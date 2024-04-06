@@ -12,17 +12,22 @@ pipeline {
             }
         }
 
-        stage('Mvn Package') {
-            steps {
-                script {
-                          def mvnCMD = "/opt/apache-maven-3.9.6/bin/mvn"
-                    
-                    // Build and test a single step
-                    sh "${mvnCMD} clean package test"
-                    stash(name: "Jenkinscicdfinal", includes: "target/*.war")
-                }
-            }
+stage('Mvn Package') {
+    steps {
+        script {
+            def mvnCMD = "/opt/apache-maven-3.9.6/bin/mvn"
+            
+            // Build and test a single step
+            sh "${mvnCMD} clean package test"
+
+            // Print out the contents of the target directory
+            sh "ls -l target"
+            
+            stash(name: "Jenkinscicdfinal", includes: "target/*.war")
         }
+    }
+}
+
 
            stage('Deploy Application') {
             agent {
