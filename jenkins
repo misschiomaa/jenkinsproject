@@ -41,7 +41,6 @@ pipeline {
 
                     // Move the WAR file to the target directory
                     sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
-"
 
                     // Reload systemd daemon
                     sh "sudo systemctl daemon-reload"
