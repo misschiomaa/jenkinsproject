@@ -47,11 +47,16 @@ pipeline {
                     // Restore stashed WAR file
                     unstash "Jenkinscicdfinal"
 
-                    // Move the WAR file to the webapps directory
-                    sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
+                // Move the WAR file to the webapps directory
+            sh "sudo mv target/jenkins-git-integration.war /home/centos/apache-tomcat-7.0.94/webapps/"
 
-                    // Restart Tomcat
-                    sh "sudo /opt/apache-tomcat-8.5.99/bin/startup.sh"
+            // Restart Tomcat
+            def tomcatStartupScript = "/opt/apache-tomcat-8.5.99/bin/startup.sh"
+            if (fileExists(tomcatStartupScript)) {
+                sh "sudo ${tomcatStartupScript}"
+            } else {
+                error "Tomcat startup script not found at ${tomcatStartupScript}"
+            }
                 }
             }
         }
