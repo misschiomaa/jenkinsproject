@@ -27,7 +27,7 @@ pipeline {
        
 stage('Deploy Application') {
             agent {
-                label 'Jenkins_Tom_Cat_Node_2'
+                label 'node1'
             }
             steps {
                 echo "Deploying the application"
