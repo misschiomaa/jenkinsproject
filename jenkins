@@ -24,39 +24,30 @@ pipeline {
             }
         }
 
-        stage('Deploy Application') {
+           stage('Deploy Application') {
             agent {
-                label 'node1'
+                label 'Jenkins_Tom_Cat_Node_2'
             }
             steps {
                 echo "Deploying the application"
                 script {
-                    // Download and install Apache Tomcat
-                    def tomcatUrl = 'https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz'
-                    sh "wget -q -O tomcat.tar.gz ${tomcatUrl}"
-                    
                     // Create the target directory if it doesn't exist
-                    sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps"
+                    sh "sudo mkdir -p /home/centos/apache-tomcat-7.0.94/webapps/"
 
-                    // Extract Tomcat into the target directory
-                    sh "sudo tar -xzf tomcat.tar.gz -C /home/centos/apache-tomcat-7.0.94/webapps"
-
-                    // Remove existing WAR files (if any)
+                    // Remove existing WAR files
                     sh "sudo rm -rf /home/centos/apache-tomcat-7.0.94/webapps/*.war"
 
-                    // Restore stashed WAR file
                     unstash "Jenkinscicdfinal"
 
-                // Move the WAR file to the webapps directory
-            sh "sudo mv target/jenkins-git-integration.war /home/centos/apache-tomcat-7.0.94/webapps/"
+                    // Move the WAR file to the target directory
+                    sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
 
-            // Restart Tomcat
-            def tomcatStartupScript = "/opt/apache-tomcat-8.5.99/bin/startup.sh"
-            if (fileExists(tomcatStartupScript)) {
-                sh "sudo ${tomcatStartupScript}"
-            } else {
-                error "Tomcat startup script not found at ${tomcatStartupScript}"
-            }
+                    // Reload systemd daemon
+                    sh "sudo systemctl daemon-reload"
+
+                    // Restart Tomcat
+                   sh "sudo /home/centos/apache-tomcat-7.0.94/bin/startup.sh"
+
                 }
             }
         }
