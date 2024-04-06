@@ -40,7 +40,8 @@ pipeline {
                     unstash "Jenkinscicdfinal"
 
                     // Move the WAR file to the target directory
-                    sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/apache-tomcat-8.5.99/webapps"
+                    sh "sudo mv target/*.war /home/centos/apache-tomcat-7.0.94/webapps/"
+"
 
                     // Reload systemd daemon
                     sh "sudo systemctl daemon-reload"
